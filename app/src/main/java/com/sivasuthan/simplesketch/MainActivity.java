@@ -1,27 +1,24 @@
 package com.sivasuthan.simplesketch;
 
 import android.app.Activity;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Bundle;
 import android.os.Environment;
-import android.view.Menu;
-import android.view.View;
-import android.view.View.MeasureSpec;
 import android.widget.Button;
 import android.widget.Toast;
 public class MainActivity extends Activity {
@@ -34,24 +31,27 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         customCanvas = (CanvasView) findViewById(R.id.signature_canvas);
-
-        Button button2 = (Button)findViewById(R.id.button2);
+        Toast.makeText(getApplicationContext(), "Application created by\nSivasuthan Dhayalan\nhttp://sivasuthan.com" , Toast.LENGTH_SHORT).show();
+        Button button2 = (Button)findViewById(R.id.btnSave);
         button2.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
             {
 
 
-                File folder = new File(Environment.getExternalStorageDirectory().toString());
+                File folder = new File(Environment.getExternalStorageDirectory().toString() + "/Pictures/SimpleSketch/");
                 boolean success = false;
                 if (!folder.exists())
                 {
                     success = folder.mkdirs();
                 }
 
-                System.out.println(success+"folder");
+                //System.out.println(success+"folder");
+                System.out.println(Environment.getExternalStorageDirectory().toString());
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_Hmmss");
+                String currentDateandTime = sdf.format(new Date());
 
-                File file = new File(Environment.getExternalStorageDirectory().toString() + "/sample.png");
+                File file = new File(Environment.getExternalStorageDirectory().toString() + "/Pictures/SimpleSketch/" + currentDateandTime + ".png");
 
                 if ( !file.exists() )
                 {
@@ -102,9 +102,11 @@ public class MainActivity extends Activity {
                         System.out.println("NULL bitmap save\n");
                     }
                     save.compress(Bitmap.CompressFormat.PNG, 100, ostream);
+                    Toast.makeText(getApplicationContext(), "File Saved. \n" + Environment.getExternalStorageDirectory().toString() +
+                            "/Pictures/SimpleSketch/" + currentDateandTime + ".png", Toast.LENGTH_SHORT).show();
                     //bitmap.compress(Bitmap.CompressFormat.PNG, 100, ostream);
-                    //ostream.flush();
-                    //ostream.close();
+                    ostream.flush();
+                    ostream.close();
                 }catch (NullPointerException e)
                 {
                     e.printStackTrace();
@@ -130,7 +132,21 @@ public class MainActivity extends Activity {
 
     
     public void clearCanvas(View v) {
-        customCanvas.clearCanvas();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to erase the canvas?\nUnsaved data will be lost!")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        customCanvas.clearCanvas();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+        // Create the AlertDialog object and return it
+        builder.create();
+        builder.show();
     }
 
 }

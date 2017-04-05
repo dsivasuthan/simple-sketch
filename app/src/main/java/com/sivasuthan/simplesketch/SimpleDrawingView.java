@@ -1,11 +1,11 @@
-/*
+
 
 package com.sivasuthan.simplesketch;
 
 
-*/
+
 /**
- * Created by Siva Dhayalan on 2015-12-24.
+ * Created by Sivasuthan Dhayalan on 2015-12-24.
  *//*
 
 
